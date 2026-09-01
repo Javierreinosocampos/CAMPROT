@@ -1,19 +1,225 @@
-button:nth-of-type(1) {
-  background-color: red;
-  color: white;
+/* ============================================================
+   CAMPROT — landing / gateway page
+   Same visual language as the internal app: warm paper, near-
+   black ink, Bodoni Moda for the brand mark, Inter for copy.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=Inter:wght@400;500;600&display=swap");
+
+:root{
+  --paper:      #faf9f6;
+  --paper-raised:#ffffff;
+  --ink:        #121210;
+  --ink-soft:   #52514a;
+  --muted:      #928f84;
+  --line:       #e6e2d8;
+  --line-strong:#d7d2c4;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+
+  color-scheme: light;
 }
 
-button:nth-of-type(1):hover {
-  background-color: darkred;
-  color: white;
+html[data-theme="dark"]{
+  --paper:      #0c0c0b;
+  --paper-raised:#161614;
+  --ink:        #f1efe8;
+  --ink-soft:   #c7c3b7;
+  --muted:      #837f73;
+  --line:       #2a2a26;
+  --line-strong:#38372f;
+  color-scheme: dark;
 }
 
-button:nth-of-type(2) {
-  background-color: blue;
-  color: white;
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-button:nth-of-type(2):hover {
-  background-color: darkblue;
-  color: white;
+*{ box-sizing: border-box; }
+html,body{ height:100%; margin:0; }
+
+body{
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+  display:flex;
+  min-height:100%;
+}
+
+a{ color:inherit; text-decoration:none; }
+::selection{ background: var(--ink); color: var(--paper); }
+
+:focus-visible{
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ---------------- Theme toggle (top-right) ---------------- */
+
+.theme-corner{
+  position: fixed;
+  top: 22px; right: 24px;
+  z-index: 10;
+}
+.icon-btn{
+  display:flex; align-items:center; justify-content:center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease),
+              background var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+.icon-btn:hover{ border-color: var(--line-strong); background: color-mix(in srgb, var(--ink) 5%, transparent); transform: scale(1.06); }
+.icon-btn:active{ transform: scale(0.92); }
+.icon-btn svg{ width:16px; height:16px; stroke: var(--ink-soft); transition: stroke var(--dur-fast) var(--ease), transform var(--dur) var(--ease); }
+#themeToggle:hover svg{ transform: rotate(14deg); }
+#themeToggle{ overflow:hidden; }
+
+/* ---------------- Hero ---------------- */
+
+@keyframes riseIn{
+  from{ opacity:0; transform: translateY(10px); }
+  to{ opacity:1; transform:none; }
+}
+
+.hero{
+  margin: auto;
+  width: 100%;
+  max-width: 560px;
+  padding: 40px 32px 64px;
+  text-align: center;
+}
+
+.hero-mark{
+  width: 44px; height:auto;
+  margin: 0 auto 28px;
+  display:block;
+  animation: riseIn var(--dur-slow) var(--ease) both;
+}
+html[data-theme="dark"] .hero-mark{ filter: invert(1); }
+
+.hero-eyebrow{
+  font-size: 11.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+  animation: riseIn var(--dur-slow) var(--ease) both;
+  animation-delay: 40ms;
+}
+
+.hero h1{
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  font-size: clamp(40px, 9vw, 64px);
+  letter-spacing: 0.05em;
+  margin: 0 0 14px;
+  animation: riseIn var(--dur-slow) var(--ease) both;
+  animation-delay: 80ms;
+}
+
+.hero-tagline{
+  font-style: italic;
+  font-family: "Bodoni Moda", serif;
+  font-size: 15px;
+  color: var(--ink-soft);
+  letter-spacing: 0.03em;
+  margin: 0 0 48px;
+  animation: riseIn var(--dur-slow) var(--ease) both;
+  animation-delay: 120ms;
+}
+
+.hero-actions{
+  display:flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content:center;
+  animation: riseIn var(--dur-slow) var(--ease) both;
+  animation-delay: 160ms;
+}
+
+.gate-btn{
+  flex: 1 1 200px;
+  max-width: 230px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 10px;
+  padding: 26px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  cursor:pointer;
+  transition: transform var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease),
+              background var(--dur-fast) var(--ease);
+}
+.gate-btn:hover{
+  transform: translateY(-3px);
+  border-color: var(--ink);
+  box-shadow: 0 14px 30px rgba(18,18,16,0.10);
+}
+.gate-btn:active{ transform: translateY(-1px) scale(.99); }
+
+.gate-btn .icon{
+  width: 34px; height: 34px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  transition: background var(--dur-fast) var(--ease);
+}
+.gate-btn:hover .icon{ background: var(--ink); }
+.gate-btn .icon svg{ width:16px; height:16px; stroke: var(--ink); transition: stroke var(--dur-fast) var(--ease); }
+.gate-btn:hover .icon svg{ stroke: var(--paper); }
+
+.gate-btn .label{
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+}
+
+.gate-btn .desc{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.gate-btn.primary{
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.gate-btn.primary .label{ color: var(--paper); }
+.gate-btn.primary .desc{ color: color-mix(in srgb, var(--paper) 65%, transparent); }
+.gate-btn.primary .icon{ background: color-mix(in srgb, var(--paper) 14%, transparent); }
+.gate-btn.primary .icon svg{ stroke: var(--paper); }
+.gate-btn.primary:hover{ box-shadow: 0 14px 30px rgba(18,18,16,0.22); }
+
+.hero-footer{
+  margin-top: 56px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: riseIn var(--dur-slow) var(--ease) both;
+  animation-delay: 200ms;
+}
+
+@media (max-width: 480px){
+  .hero{ padding: 32px 22px 48px; }
+  .hero-actions{ flex-direction: column; align-items:stretch; }
+  .gate-btn{ max-width: none; }
 }
