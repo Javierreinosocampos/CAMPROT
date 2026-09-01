@@ -44,7 +44,7 @@ function clearFilters() {
 
 async function loadContacts() {
   const { data, error } = await supabase
-    .from("contacts")
+    .from("camprot_contacts")
     .select("*")
     .order("created_at", { ascending: false });
 
@@ -164,7 +164,7 @@ const NEXT_RESPUESTA = { Pendiente: "Sí", "Sí": "No", No: "Pendiente" };
 
 async function cycleRespuesta(id, current) {
   const next = NEXT_RESPUESTA[current] || "Pendiente";
-  const { error } = await supabase.from("contacts").update({ respuesta: next }).eq("id", id);
+  const { error } = await supabase.from("camprot_contacts").update({ respuesta: next }).eq("id", id);
   if (error) {
     toast("No se pudo actualizar la respuesta: " + error.message, "error");
     return;
@@ -210,8 +210,8 @@ async function saveContact(e) {
 
   const payload = { nombre, via, respuesta, detalle, notas };
   const { error } = id
-    ? await supabase.from("contacts").update(payload).eq("id", id)
-    : await supabase.from("contacts").insert(payload);
+    ? await supabase.from("camprot_contacts").update(payload).eq("id", id)
+    : await supabase.from("camprot_contacts").insert(payload);
 
   saveBtn.disabled = false;
   saveBtn.textContent = "Guardar";
@@ -228,7 +228,7 @@ async function saveContact(e) {
 
 async function deleteContact(id) {
   if (!confirm("¿Eliminar este contacto?")) return;
-  const { error } = await supabase.from("contacts").delete().eq("id", id);
+  const { error } = await supabase.from("camprot_contacts").delete().eq("id", id);
   if (error) {
     toast("No se pudo eliminar: " + error.message, "error");
     return;
