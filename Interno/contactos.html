@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contactos — Camprot</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/config.js"></script>
+</head>
+<body>
+<div class="shell">
+
+  <header class="topnav">
+    <a class="brand" href="comparar.html">
+      <img src="assets/logo-mark.png" alt="Camprot">
+      <span>CAMPROT</span>
+    </a>
+    <nav class="nav-links">
+      <a href="comparar.html" data-page="comparar">Comparar</a>
+      <a href="contactos.html" data-page="contactos">Contactos</a>
+    </nav>
+    <div class="nav-spacer"></div>
+    <div class="nav-right">
+      <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema"></button>
+      <button class="icon-btn" id="logoutBtn" aria-label="Salir">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+      <button class="icon-btn hamburger" id="hamburger" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Contactos</h1>
+        <p>Empresas y personas contactadas para vender el material, y si han respondido.</p>
+      </div>
+      <button class="btn" id="addContactBtn">+ Añadir contacto</button>
+    </div>
+
+    <div class="filters" id="contactFilters">
+      <div class="field field-grow">
+        <input type="search" id="searchInput" placeholder="Buscar por nombre o nota…">
+      </div>
+      <div class="field">
+        <select id="viaFilter">
+          <option value="">Toda vía de contacto</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="respuestaFilter">
+          <option value="">Cualquier respuesta</option>
+          <option value="Sí">Ha respondido</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="No">Sin respuesta</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="sortFilter">
+          <option value="date-desc">Más recientes primero</option>
+          <option value="date-asc">Más antiguos primero</option>
+          <option value="nombre-asc">Nombre (A-Z)</option>
+          <option value="nombre-desc">Nombre (Z-A)</option>
+          <option value="respuesta">Respuesta</option>
+        </select>
+      </div>
+      <button type="button" class="btn secondary" id="clearFiltersBtn">Limpiar filtros</button>
+    </div>
+
+    <div class="table-wrap anim-in" id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Vía de contacto</th>
+            <th>Respuesta</th>
+            <th>Notas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="contactsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card hidden" id="emptyCard" style="text-align:center; color:var(--muted); margin-top:18px;">
+      <img class="mark" src="assets/logo-mark.png" alt="" style="width:34px; opacity:.3; margin:0 auto 14px; display:block;">
+      <p id="emptyMsg" style="margin:0;">Todavía no hay contactos registrados. Añade el primero con "+ Añadir contacto".</p>
+    </div>
+  </main>
+</div>
+
+<!-- Add / edit contact modal -->
+<div class="modal-backdrop" id="contactModalBackdrop">
+  <div class="modal">
+    <h2 id="contactModalTitle">Añadir contacto</h2>
+    <form id="contactForm" class="form-grid">
+      <input type="hidden" id="fId">
+      <label>Empresa o persona
+        <input type="text" id="fNombre" required placeholder="Nombre del contacto">
+      </label>
+      <div class="form-row">
+        <label>Vía de contacto
+          <input type="text" id="fVia" placeholder="Email, LinkedIn…" list="viaList" required>
+          <datalist id="viaList">
+            <option value="Email"></option>
+            <option value="LinkedIn"></option>
+            <option value="Teléfono"></option>
+            <option value="WhatsApp"></option>
+            <option value="Formulario web"></option>
+          </datalist>
+        </label>
+        <label>Respuesta
+          <select id="fRespuesta">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+      <label>Contacto directo <span style="opacity:.6;">(opcional)</span>
+        <input type="text" id="fDetalle" placeholder="Email, teléfono o enlace de LinkedIn">
+      </label>
+      <label>Notas <span style="opacity:.6;">(opcional)</span>
+        <input type="text" id="fNotes" placeholder="Ej. contactado por Ana, pide catálogo…">
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" id="cancelContactBtn">Cancelar</button>
+        <button type="submit" class="btn" id="saveContactBtn">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="assets/contactos.js"></script>
+</body>
+</html>
