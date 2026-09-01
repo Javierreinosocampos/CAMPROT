@@ -75,7 +75,7 @@ html[data-theme="dark"]{
 }
 
 *{ box-sizing: border-box; }
-html,body{ height:100%; }
+html,body{ height:100%; overflow-x: hidden; }
 body{
   margin:0;
   background: var(--paper);
@@ -245,13 +245,20 @@ main.page{
 .btn.danger{ background: var(--danger-ink); border-color: var(--danger-ink); }
 .btn[disabled]{ opacity:.45; cursor: not-allowed; transform:none; box-shadow:none; }
 
-/* ---------------- Filters row ---------------- */
+/* ---------------- Filters row ----------------
+   A CSS grid (not flex-wrap) so every control lines up on an even
+   set of columns instead of wrapping raggedly at in-between widths. */
 
 .filters{
-  display:flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap;
+  display:grid;
+  grid-template-columns: minmax(200px,1.6fr) minmax(160px,1fr) minmax(190px,1fr) auto auto;
+  gap: 12px;
+  margin-bottom: 22px;
+  align-items: center;
 }
 .field{
   position: relative;
+  min-width: 0;
 }
 .field input[type="text"],
 .field input[type="search"],
@@ -265,17 +272,26 @@ main.page{
   color: var(--ink);
   border-radius: var(--radius-s);
   padding: 10px 14px;
-  min-width: 220px;
+  width: 100%;
+  min-width: 0;
   transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
-.field select{ min-width: 180px; }
-.field-grow{ flex: 1 1 220px; max-width: 320px; }
-.field-pair{ display:flex; gap:12px; }
+.field-grow{ min-width: 0; }
+.field-pair{ display:flex; gap:12px; min-width: 0; }
 .field-price{ width: 130px; }
 .field-price input{ width: 100%; min-width: 0; }
 .field input:focus, .field select:focus{
   border-color: var(--ink);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* Tablet: two even columns instead of five cramped ones. */
+@media (min-width: 761px) and (max-width: 1024px){
+  .filters{ grid-template-columns: repeat(2, 1fr); }
+  .field-grow{ grid-column: 1 / -1; }
+  .field-pair{ grid-column: 1 / -1; }
+  .field-pair .field-price{ flex: 1; width: auto; }
+  .filters .btn{ grid-column: 1 / -1; justify-content:center; }
 }
 
 /* ---------------- Table ---------------- */
@@ -356,7 +372,16 @@ tbody tr:hover{ background: color-mix(in srgb, var(--ink) 3%, transparent); }
   transition: border-color var(--dur-slow) var(--ease);
 }
 
-.compare-list{ display:flex; flex-direction:column; gap:10px; margin-top: 18px; min-width: 0; }
+/* A real grid of even cards, not a stacked list — this is the
+   "squared" layout: cards line up in clean columns and only drop
+   to one per row once there isn't room for two. */
+.compare-list{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap:10px;
+  margin-top: 18px;
+  min-width: 0;
+}
 .compare-row{
   display:flex; align-items:center; justify-content:space-between;
   gap: 12px;
@@ -471,6 +496,14 @@ button.row-action{
 .toast.show{ opacity:1; transform: translateX(-50%) translateY(0) scale(1); }
 .toast.error{ background: var(--danger-ink); }
 
+/* ---------------- Theme corner (login page) ---------------- */
+
+.theme-corner{
+  position: fixed;
+  top: 22px; right: 24px;
+  z-index: 10;
+}
+
 /* ---------------- Login page ---------------- */
 
 .login-shell{
@@ -495,6 +528,8 @@ html[data-theme="dark"] .login-card img{ filter: invert(1); }
 .login-card .btn{ justify-content:center; margin-top: 6px; }
 .login-msg{ font-size: 12.5px; margin-top: 14px; min-height: 16px; color: var(--danger-ink); transition: opacity var(--dur-fast) var(--ease); }
 .login-hint{ font-size: 12px; color: var(--muted); margin-top: 4px; }
+.login-hint a{ color: var(--muted); transition: color var(--dur-fast) var(--ease); }
+.login-hint a:hover{ color: var(--ink); text-decoration: underline; }
 
 /* Gentle shake on a wrong access code — reinforces the error
    without a jarring color flash. */
@@ -531,8 +566,8 @@ html[data-theme="dark"] .login-card img{ filter: invert(1); }
   .page-head .btn{ width: 100%; justify-content:center; }
 
   .field input, .field select{ min-width: 0; width: 100%; }
-  .filters{ flex-direction:column; align-items:stretch; }
-  .field-grow{ max-width: none; }
+  .filters{ grid-template-columns: 1fr; }
+  .field-grow, .field-pair{ grid-column: auto; }
   .field-pair{ width: 100%; }
   .field-price{ width: auto; flex: 1; }
   .filters .btn{ width: 100%; justify-content:center; }
@@ -543,6 +578,7 @@ html[data-theme="dark"] .login-card img{ filter: invert(1); }
   tbody td{ border:none; padding: 4px 0; }
 
   .card{ padding: 16px; }
+  .compare-list{ grid-template-columns: 1fr; }
   .compare-row{
     flex-direction:column; align-items:stretch; gap:10px;
     padding: 14px 16px;
