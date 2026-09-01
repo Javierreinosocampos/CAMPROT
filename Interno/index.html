@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camprot — Acceso</title>
+<link rel="icon" href="assets/logo-mark.png">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/config.js"></script>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-card" id="loginCard">
+      <img src="assets/logo-mark.png" alt="Camprot">
+      <h1>CAMPROT</h1>
+      <p class="tag">protect the origin</p>
+
+      <form id="accessForm">
+        <label>Código de acceso
+          <input type="password" id="accessCode" autocomplete="off" required placeholder="••••••••" autofocus>
+        </label>
+        <button class="btn" type="submit" id="accessBtn">Entrar</button>
+      </form>
+      <p class="login-msg" id="loginMsg"></p>
+      <p class="login-hint">Uso interno · solo equipo Camprot</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initTheme, grantAccess, hasAccess } from "./assets/app.js";
+
+    initTheme();
+
+    const form = document.getElementById("accessForm");
+    const msg = document.getElementById("loginMsg");
+    const btn = document.getElementById("accessBtn");
+    const card = document.getElementById("loginCard");
+
+    // If already unlocked on this device, skip straight to the app.
+    if (hasAccess()) window.location.href = "comparar.html";
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+      const code = document.getElementById("accessCode").value.trim();
+
+      if (grantAccess(code)) {
+        window.location.href = "comparar.html";
+      } else {
+        msg.textContent = "Código incorrecto.";
+        document.getElementById("accessCode").value = "";
+        document.getElementById("accessCode").focus();
+
+        // Quiet shake instead of a jarring flash.
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+      }
+    });
+  </script>
+</body>
+</html>

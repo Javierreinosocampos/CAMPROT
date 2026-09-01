@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparar presupuestos — Camprot</title>
+<link rel="icon" href="assets/logo-mark.png">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/config.js"></script>
+</head>
+<body>
+<div class="shell">
+
+  <header class="topnav">
+    <a class="brand" href="comparar.html">
+      <img src="assets/logo-mark.png" alt="Camprot">
+      <span>CAMPROT</span>
+    </a>
+    <div class="nav-spacer"></div>
+    <div class="nav-right">
+      <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema"></button>
+      <button class="icon-btn" id="logoutBtn" aria-label="Salir">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Comparar presupuestos</h1>
+        <p>Registra lo que os cotiza cada empresa o persona por material, y compara quién sale más a cuenta.</p>
+      </div>
+      <button class="btn" id="addQuoteBtn">+ Añadir presupuesto</button>
+    </div>
+
+    <div class="filters">
+      <div class="field" style="flex:1; max-width:320px;">
+        <input type="search" id="searchInput" placeholder="Buscar por proveedor o persona…">
+      </div>
+      <div class="field">
+        <select id="materialFilter">
+          <option value="">Todos los materiales</option>
+          <option value="Lana">Lana</option>
+          <option value="Algodón">Algodón</option>
+          <option value="Corcho">Corcho</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="sortFilter">
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+          <option value="date-desc">Más recientes primero</option>
+          <option value="date-asc">Más antiguos primero</option>
+          <option value="proveedor-asc">Proveedor (A-Z)</option>
+        </select>
+      </div>
+      <div class="field">
+        <input type="number" id="minPrice" step="0.01" min="0" placeholder="Precio mín." style="max-width:130px;">
+      </div>
+      <div class="field">
+        <input type="number" id="maxPrice" step="0.01" min="0" placeholder="Precio máx." style="max-width:130px;">
+      </div>
+      <button type="button" class="btn secondary" id="clearFiltersBtn">Limpiar filtros</button>
+    </div>
+
+    <div id="groupsWrap"></div>
+
+    <div class="card hidden" id="emptyCard" style="text-align:center; color:var(--muted);">
+      <img class="mark" src="assets/logo-mark.png" alt="" style="width:34px; opacity:.3; margin:0 auto 14px; display:block;">
+      <p id="emptyMsg" style="margin:0;">Todavía no hay presupuestos registrados. Añade el primero con "+ Añadir presupuesto".</p>
+    </div>
+  </main>
+</div>
+
+<!-- Add quote modal -->
+<div class="modal-backdrop" id="quoteModalBackdrop">
+  <div class="modal">
+    <h2>Añadir presupuesto</h2>
+    <form id="quoteForm" class="form-grid">
+      <label>Material
+        <select id="fMaterial" required>
+          <option value="" disabled selected>Selecciona un material…</option>
+          <option value="Lana">Lana</option>
+          <option value="Algodón">Algodón</option>
+          <option value="Corcho">Corcho</option>
+        </select>
+      </label>
+      <label>Empresa o persona
+        <input type="text" id="fProveedor" required placeholder="Nombre de quien os da el precio" list="proveedorList">
+        <datalist id="proveedorList"></datalist>
+      </label>
+      <div class="form-row">
+        <label>Precio
+          <input type="number" id="fPrice" step="0.01" min="0" required placeholder="0.00">
+        </label>
+        <label>Unidad
+          <input type="text" id="fUnit" placeholder="€/kg" list="unitList">
+          <datalist id="unitList">
+            <option value="€/kg"></option>
+            <option value="€/tonelada"></option>
+            <option value="€/saco"></option>
+            <option value="€/unidad"></option>
+          </datalist>
+        </label>
+      </div>
+      <label>Notas <span style="opacity:.6;">(opcional)</span>
+        <input type="text" id="fNotes" placeholder="Ej. incluye transporte, cantidad mínima…">
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn secondary" id="cancelQuoteBtn">Cancelar</button>
+        <button type="submit" class="btn" id="saveQuoteBtn">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="assets/comparar.js"></script>
+</body>
+</html>

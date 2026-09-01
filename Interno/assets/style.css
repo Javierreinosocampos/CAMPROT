@@ -1,0 +1,526 @@
+/* ============================================================
+   CAMPROT — internal tools
+   Type: Bodoni Moda (brand / headings) + Inter (interface)
+   Palette: warm paper, near-black ink, hairline dividers,
+   three muted functional colors for stock states only.
+   Motion: subtle, single easing curve, no bounce — restrained
+   and quiet rather than decorative.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=Inter:wght@400;500;600&display=swap");
+
+:root{
+  --paper:      #faf9f6;
+  --paper-raised:#ffffff;
+  --ink:        #121210;
+  --ink-soft:   #52514a;
+  --muted:      #928f84;
+  --line:       #e6e2d8;
+  --line-strong:#d7d2c4;
+  --focus:      #121210;
+
+  --ok-bg:      #eaf0e7;
+  --ok-ink:     #3f6b46;
+  --warn-bg:    #f6ecd9;
+  --warn-ink:   #97701f;
+  --danger-bg:  #f5e7e2;
+  --danger-ink: #a34428;
+
+  --radius-s: 5px;
+  --radius-m: 8px;
+  --shadow-menu: 0 10px 30px rgba(18,18,16,0.12);
+  --shadow-soft: 0 6px 18px rgba(18,18,16,0.08);
+
+  /* ---- Motion ----
+     One easing curve everywhere (expo-out — quick start, gentle
+     settle, no overshoot), three durations. Keeps every animation
+     in the app feeling like the same hand drew it. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+
+  color-scheme: light;
+}
+
+html[data-theme="dark"]{
+  --paper:      #0c0c0b;
+  --paper-raised:#161614;
+  --ink:        #f1efe8;
+  --ink-soft:   #c7c3b7;
+  --muted:      #837f73;
+  --line:       #2a2a26;
+  --line-strong:#38372f;
+  --focus:      #f1efe8;
+
+  --ok-bg:      #1c2a1f;
+  --ok-ink:     #8fc79a;
+  --warn-bg:    #2c2413;
+  --warn-ink:   #dcaa53;
+  --danger-bg:  #2c1a14;
+  --danger-ink: #e0917a;
+
+  color-scheme: dark;
+}
+
+/* Respect reduced-motion — everything above is decoration, none
+   of it should be forced on people who've asked for less. */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+}
+
+a{ color: inherit; text-decoration: none; }
+
+::selection{ background: var(--ink); color: var(--paper); }
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-thumb{ background: var(--line-strong); border-radius: 8px; }
+::-webkit-scrollbar-track{ background: transparent; }
+
+button, input, select, textarea{ font-family: inherit; font-size: inherit; color: inherit; }
+
+:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  transition: outline-offset var(--dur-fast) var(--ease);
+}
+
+/* ---------------- Entrance keyframes ---------------- */
+
+@keyframes pageIn{
+  from{ opacity:0; transform: translateY(6px); }
+  to{ opacity:1; transform: none; }
+}
+@keyframes cardIn{
+  from{ opacity:0; transform: translateY(8px) scale(.99); }
+  to{ opacity:1; transform: none; }
+}
+@keyframes rowIn{
+  from{ opacity:0; transform: translateY(4px); }
+  to{ opacity:1; transform: none; }
+}
+
+/* Applied once per page load — a quiet settle-in, not a slide show. */
+main.page{ animation: pageIn var(--dur-slow) var(--ease) both; }
+
+/* Applied via JS (see app.js `reveal()`) whenever a hidden panel
+   is shown, so cards restart the animation each time they appear. */
+.anim-in{ animation: cardIn var(--dur) var(--ease) both; }
+
+/* Table rows fade up in a light stagger, driven by an inline
+   animation-delay set from JS per row index. */
+tbody tr.row-in{ animation: rowIn var(--dur) var(--ease) both; }
+
+/* ---------------- Layout shell ---------------- */
+
+.shell{ min-height: 100%; display:flex; flex-direction:column; }
+
+.topnav{
+  position: sticky; top:0; z-index: 40;
+  display:flex; align-items:center; gap: 40px;
+  padding: 14px 32px;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: saturate(160%) blur(10px);
+  border-bottom: 1px solid var(--line);
+  transition: background var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease);
+}
+
+.brand{
+  display:flex; align-items:center; gap:10px;
+  margin-right: 8px;
+}
+.brand img{ height: 20px; width:auto; display:block; transition: filter var(--dur-slow) var(--ease); }
+html[data-theme="dark"] .brand img{ filter: invert(1); }
+.brand span{
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  font-size: 15px;
+}
+
+.nav-links{ display:flex; align-items:center; gap: 4px; }
+.nav-links a{
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  white-space: nowrap;
+}
+.nav-links a:hover{ color: var(--ink); }
+.nav-links a.active{ background: var(--ink); color: var(--paper); }
+
+.nav-spacer{ flex: 1; }
+
+.nav-right{ display:flex; align-items:center; gap: 6px; }
+.nav-email{
+  font-size: 12.5px; color: var(--muted); margin-right: 8px;
+  max-width: 220px; overflow:hidden; text-overflow: ellipsis; white-space:nowrap;
+}
+
+.icon-btn{
+  display:flex; align-items:center; justify-content:center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease),
+              background var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+.icon-btn:hover{ border-color: var(--line-strong); background: color-mix(in srgb, var(--ink) 5%, transparent); transform: scale(1.06); }
+.icon-btn:active{ transform: scale(0.92); }
+.icon-btn svg{ width:16px; height:16px; stroke: var(--ink-soft); transition: stroke var(--dur-fast) var(--ease), transform var(--dur) var(--ease); opacity: 1; transition-property: stroke, transform, opacity; }
+#themeToggle:hover svg{ transform: rotate(14deg); }
+#themeToggle{ overflow:hidden; }
+
+.hamburger{ display:none; }
+
+/* ---------------- Page shell ---------------- */
+
+main.page{
+  flex:1;
+  width:100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 44px 32px 80px;
+}
+
+.page-head{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap: 24px; margin-bottom: 28px; flex-wrap: wrap;
+}
+.page-head h1{
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  font-size: 30px;
+  margin: 0 0 6px;
+  letter-spacing: 0.01em;
+}
+.page-head p{
+  margin:0; color: var(--muted); font-size: 14px; max-width: 46ch;
+}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13.5px; font-weight: 500;
+  cursor:pointer;
+  transition: opacity var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease),
+              box-shadow var(--dur-fast) var(--ease),
+              background var(--dur-fast) var(--ease);
+}
+.btn:hover{ opacity: .86; transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+.btn:active{ transform: translateY(0) scale(.98); box-shadow:none; opacity: 1; transition-duration: 70ms; }
+.btn.secondary{
+  background: transparent; color: var(--ink);
+  border-color: var(--line-strong);
+  box-shadow: none;
+}
+.btn.secondary:hover{ background: color-mix(in srgb, var(--ink) 5%, transparent); opacity:1; box-shadow:none; }
+.btn.danger{ background: var(--danger-ink); border-color: var(--danger-ink); }
+.btn[disabled]{ opacity:.45; cursor: not-allowed; transform:none; box-shadow:none; }
+
+/* ---------------- Filters row ---------------- */
+
+.filters{
+  display:flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap;
+}
+.field{
+  position: relative;
+}
+.field input[type="text"],
+.field input[type="search"],
+.field select,
+.field input[type="number"],
+.field input[type="email"],
+.field input[type="password"]{
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-raised);
+  color: var(--ink);
+  border-radius: var(--radius-s);
+  padding: 10px 14px;
+  min-width: 220px;
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.field select{ min-width: 180px; }
+.field input:focus, .field select:focus{
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* ---------------- Table ---------------- */
+
+.table-wrap{
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: var(--paper-raised);
+  transition: border-color var(--dur-slow) var(--ease);
+}
+table{ width:100%; border-collapse: collapse; }
+thead th{
+  text-align:left;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--ink) 3%, var(--paper-raised));
+}
+tbody td{
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+tbody tr:last-child td{ border-bottom: none; }
+tbody tr{ transition: background var(--dur-fast) var(--ease); }
+tbody tr:hover{ background: color-mix(in srgb, var(--ink) 3%, transparent); }
+
+.prod-cell{ display:flex; align-items:center; gap:12px; }
+.mono{
+  width: 34px; height: 34px; flex: none;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center;
+  font-family: "Bodoni Moda", serif; font-size: 14px;
+  color: var(--ink-soft);
+}
+.prod-name{ font-weight: 500; }
+.prod-sku{ display:block; font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+.badge{
+  display:inline-flex; align-items:center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px; font-weight: 500;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.badge.ok{ background: var(--ok-bg); color: var(--ok-ink); }
+.badge.warn{ background: var(--warn-bg); color: var(--warn-ink); }
+.badge.danger{ background: var(--danger-bg); color: var(--danger-ink); }
+
+.price-cell b{ font-weight: 600; }
+.price-cell span{ color: var(--muted); font-size: 12.5px; }
+
+.row-action{ color: var(--muted); font-size: 13px; transition: color var(--dur-fast) var(--ease); }
+.row-action:hover{ color: var(--ink); }
+
+.empty-row td{
+  padding: 60px 20px;
+  text-align:center;
+  color: var(--muted);
+}
+.empty-row .mark{
+  width: 34px; opacity: .3; margin: 0 auto 14px;
+  display:block;
+}
+
+/* ---------------- Cards (comparar) ---------------- */
+
+.card{
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  background: var(--paper-raised);
+  padding: 22px;
+  transition: border-color var(--dur-slow) var(--ease);
+}
+
+.compare-list{ display:flex; flex-direction:column; gap:10px; margin-top: 18px; }
+.compare-row{
+  display:flex; align-items:center; justify-content:space-between;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 15px 18px;
+  background: var(--paper-raised);
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.compare-row:hover{ transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+.compare-row.best{ border-color: var(--ok-ink); }
+.compare-row .supplier{ display:flex; flex-direction:column; gap:2px; }
+.compare-row .supplier b{ font-weight: 500; }
+.compare-row .supplier small{ color: var(--muted); }
+.compare-row .price{ font-size: 17px; font-weight: 600; display:flex; align-items:center; gap:10px; }
+.compare-row .tag{
+  font-size: 11px; letter-spacing: .04em; font-weight:600;
+  color: var(--ok-ink); background: var(--ok-bg);
+  padding: 3px 9px; border-radius: 999px;
+}
+
+/* ---------------- Forms / modal ---------------- */
+
+.modal-backdrop{
+  position: fixed; inset:0; background: rgba(10,10,8,0.42);
+  display:flex; align-items:center; justify-content:center;
+  padding: 24px; z-index: 100;
+  opacity:0; pointer-events:none;
+  transition: opacity var(--dur) var(--ease), backdrop-filter var(--dur) var(--ease);
+}
+.modal-backdrop.open{ opacity:1; pointer-events:auto; }
+
+.modal{
+  width: 100%; max-width: 480px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 26px;
+  box-shadow: var(--shadow-menu);
+  transform: translateY(6px) scale(.98);
+  transition: transform var(--dur) var(--ease);
+}
+.modal-backdrop.open .modal{ transform: translateY(0) scale(1); }
+
+.modal h2{
+  font-family: "Bodoni Moda", serif; font-weight:500; font-size:20px; margin: 0 0 18px;
+}
+
+.form-grid{ display:flex; flex-direction:column; gap: 14px; }
+.form-grid label{
+  display:flex; flex-direction: column; gap: 6px;
+  font-size: 12.5px; color: var(--ink-soft);
+}
+.form-grid label input, .form-grid label select{
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s);
+  padding: 10px 12px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.form-grid label input:focus, .form-grid label select:focus{
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.form-row{ display:flex; gap: 12px; }
+.form-row > label{ flex:1; }
+.modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top: 22px; }
+
+/* ---------------- Material groups (comparar) ---------------- */
+
+.material-group h2{
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  font-size: 16.5px;
+  margin: 0 0 14px;
+  letter-spacing: 0.01em;
+  display:flex; align-items:baseline; gap:10px;
+}
+.material-group h2 .count{
+  font-family: "Inter", sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--muted); letter-spacing: 0;
+}
+.compare-row .price .unit{
+  font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 1px;
+}
+button.row-action{
+  background:none; border:none; padding:2px 4px; margin-left: 4px;
+  font-size: 13px; cursor:pointer; line-height:1;
+}
+
+/* ---------------- Toast ---------------- */
+
+.toast{
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px) scale(.98);
+  background: var(--ink); color: var(--paper);
+  padding: 12px 20px; border-radius: var(--radius-s);
+  font-size: 13.5px;
+  opacity:0; pointer-events:none;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), background var(--dur-fast) var(--ease);
+  z-index: 200;
+  box-shadow: var(--shadow-menu);
+}
+.toast.show{ opacity:1; transform: translateX(-50%) translateY(0) scale(1); }
+.toast.error{ background: var(--danger-ink); }
+
+/* ---------------- Login page ---------------- */
+
+.login-shell{
+  min-height:100%; display:flex; align-items:center; justify-content:center;
+  padding: 24px;
+}
+.login-card{ width:100%; max-width: 380px; text-align:center; animation: cardIn var(--dur-slow) var(--ease) both; }
+.login-card img{ height: 44px; margin-bottom: 22px; transition: filter var(--dur-slow) var(--ease); }
+html[data-theme="dark"] .login-card img{ filter: invert(1); }
+.login-card h1{
+  font-family:"Bodoni Moda", serif; font-weight:500; font-size:24px; letter-spacing:.08em; margin: 0 0 4px;
+}
+.login-card .tag{ font-family:"Bodoni Moda", serif; font-style:italic; color: var(--muted); font-size:14px; margin: 0 0 34px; }
+.login-card form{ display:flex; flex-direction:column; gap:12px; text-align:left; }
+.login-card label{ font-size:12.5px; color: var(--ink-soft); display:flex; flex-direction:column; gap:6px; }
+.login-card input{
+  border:1px solid var(--line-strong); border-radius: var(--radius-s);
+  padding: 11px 13px; background: var(--paper-raised); color: var(--ink);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.login-card input:focus{ border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 8%, transparent); }
+.login-card .btn{ justify-content:center; margin-top: 6px; }
+.login-msg{ font-size: 12.5px; margin-top: 14px; min-height: 16px; color: var(--danger-ink); transition: opacity var(--dur-fast) var(--ease); }
+.login-hint{ font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* Gentle shake on a wrong access code — reinforces the error
+   without a jarring color flash. */
+@keyframes shakeX{
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+.login-card.shake{ animation: shakeX 420ms var(--ease); }
+
+/* ---------------- Utility ---------------- */
+
+.hidden{ display:none !important; }
+.loading-row{ text-align:center; color:var(--muted); padding: 50px 0; }
+.mt-0{ margin-top:0; }
+
+@media (max-width: 760px){
+  .topnav{ padding: 12px 18px; gap: 16px; }
+  .nav-links{
+    position: fixed; top: 58px; left:0; right:0;
+    flex-direction: column; align-items:stretch;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+    padding: 8px 18px 16px;
+    display:none;
+  }
+  .nav-links.open{ display:flex; animation: cardIn var(--dur) var(--ease) both; }
+  .nav-links a{ padding: 12px 10px; border-radius: var(--radius-s); }
+  .nav-links a.active{ border-radius: var(--radius-s); }
+  .hamburger{ display:flex; }
+  main.page{ padding: 30px 18px 60px; }
+  .page-head{ align-items:flex-start; }
+  .field input, .field select{ min-width: 0; width: 100%; }
+  .filters{ flex-direction:column; }
+  thead{ display:none; }
+  table, tbody, tr, td{ display:block; width:100%; }
+  tbody tr{ border-bottom: 1px solid var(--line); padding: 14px 20px; }
+  tbody td{ border:none; padding: 4px 0; }
+  .compare-row{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .compare-row:hover{ transform:none; }
+}
