@@ -3,60 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Camprot — Acceso</title>
-<link rel="icon" href="assets/logo-mark.png">
-<link rel="stylesheet" href="assets/style.css">
-<script src="assets/config.js"></script>
+<title>CAMPROT — Protect the Origin</title>
+<link rel="icon" href="Interno/assets/logo-mark.png">
+<link rel="stylesheet" href="styles.css">
+<script>
+  // Set the theme before first paint to avoid a light/dark flash.
+  (function(){
+    var saved = localStorage.getItem("camprot-theme");
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme", saved || (dark ? "dark" : "light"));
+  })();
+</script>
 </head>
 <body>
-  <div class="login-shell">
-    <div class="login-card" id="loginCard">
-      <img src="assets/logo-mark.png" alt="Camprot">
-      <h1>CAMPROT</h1>
-      <p class="tag">protect the origin</p>
 
-      <form id="accessForm">
-        <label>Código de acceso
-          <input type="password" id="accessCode" autocomplete="off" required placeholder="••••••••" autofocus>
-        </label>
-        <button class="btn" type="submit" id="accessBtn">Entrar</button>
-      </form>
-      <p class="login-msg" id="loginMsg"></p>
-      <p class="login-hint">Uso interno · solo equipo Camprot</p>
-    </div>
+  <div class="theme-corner">
+    <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema"></button>
   </div>
 
-  <script type="module">
-    import { initTheme, grantAccess, hasAccess } from "./assets/app.js";
+  <main class="hero">
+    <img class="hero-mark" src="Interno/assets/logo-mark.png" alt="">
+    <p class="hero-eyebrow">Bienvenido a</p>
+    <h1>CAMPROT</h1>
+    <p class="hero-tagline">Protect the origin</p>
 
-    initTheme();
+    <div class="hero-actions">
+      <a class="gate-btn primary" href="Presentation/index.html">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/></svg>
+        </span>
+        <span class="label">Presentación</span>
+        <span class="desc">Conoce el proyecto</span>
+      </a>
 
-    const form = document.getElementById("accessForm");
-    const msg = document.getElementById("loginMsg");
-    const btn = document.getElementById("accessBtn");
-    const card = document.getElementById("loginCard");
+      <a class="gate-btn" href="Interno/index.html">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </span>
+        <span class="label">Interno</span>
+        <span class="desc">Acceso al equipo</span>
+      </a>
+    </div>
 
-    // If already unlocked on this device, skip straight to the app.
-    if (hasAccess()) window.location.href = "comparar.html";
+    <p class="hero-footer">CAMPROT</p>
+  </main>
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      msg.textContent = "";
-      const code = document.getElementById("accessCode").value.trim();
-
-      if (grantAccess(code)) {
-        window.location.href = "comparar.html";
-      } else {
-        msg.textContent = "Código incorrecto.";
-        document.getElementById("accessCode").value = "";
-        document.getElementById("accessCode").focus();
-
-        // Quiet shake instead of a jarring flash.
-        card.classList.remove("shake");
-        void card.offsetWidth;
-        card.classList.add("shake");
-      }
-    });
-  </script>
+<script src="scripts.js"></script>
 </body>
 </html>

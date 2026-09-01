@@ -35,7 +35,7 @@
     </div>
 
     <div class="filters">
-      <div class="field" style="flex:1; max-width:320px;">
+      <div class="field field-grow">
         <input type="search" id="searchInput" placeholder="Buscar por proveedor o persona…">
       </div>
       <div class="field">
@@ -55,11 +55,13 @@
           <option value="proveedor-asc">Proveedor (A-Z)</option>
         </select>
       </div>
-      <div class="field">
-        <input type="number" id="minPrice" step="0.01" min="0" placeholder="Precio mín." style="max-width:130px;">
-      </div>
-      <div class="field">
-        <input type="number" id="maxPrice" step="0.01" min="0" placeholder="Precio máx." style="max-width:130px;">
+      <div class="field-pair">
+        <div class="field field-price">
+          <input type="number" id="minPrice" step="0.01" min="0" placeholder="Precio mín.">
+        </div>
+        <div class="field field-price">
+          <input type="number" id="maxPrice" step="0.01" min="0" placeholder="Precio máx.">
+        </div>
       </div>
       <button type="button" class="btn secondary" id="clearFiltersBtn">Limpiar filtros</button>
     </div>
