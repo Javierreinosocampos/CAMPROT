@@ -124,9 +124,11 @@ function render() {
           </button>
         </td>
         <td data-label="Notas"><span style="color:var(--muted);">${c.notas ? escapeHtml(c.notas) : "—"}</span></td>
-        <td data-label="" class="actions-cell">
-          <button type="button" class="row-action" data-edit="${c.id}" title="Editar">✎</button>
-          <button type="button" class="row-action" data-del="${c.id}" title="Eliminar">✕</button>
+        <td data-label="">
+          <div class="actions-cell">
+            <button type="button" class="row-action" data-edit="${c.id}" title="Editar">✎</button>
+            <button type="button" class="row-action" data-del="${c.id}" title="Eliminar">✕</button>
+          </div>
         </td>
       </tr>`)
     .join("");
