@@ -237,7 +237,7 @@
     // 0.68-0.86  tagline fades in
     // 0.86-1.00  settle, slight breathing room before closing section
 
-    var logoIn   = easeOutCubic(seg(t, 0.00, 0.11));
+    var logoIn   = easeOutCubic(seg(t, -0.05, 0.11));
     var wordIn   = easeOutCubic(seg(t, 0.14, 0.30));
     var sweep    = easeInOutCubic(seg(t, 0.34, 0.70));
     var tagIn    = easeOutCubic(seg(t, 0.70, 0.86));
